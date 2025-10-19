@@ -188,6 +188,10 @@ struct StatCard: View {
         .background(
             RoundedRectangle(cornerRadius: 20)
                 .fill(color)
+            
+            
+            
+            
         )
     }
 }
