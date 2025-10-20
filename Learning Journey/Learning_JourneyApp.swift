@@ -25,7 +25,7 @@ struct Learning_JourneyApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+//            ContentView()
         }
         .modelContainer(sharedModelContainer)
     }

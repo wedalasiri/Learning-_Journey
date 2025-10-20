@@ -218,12 +218,12 @@ struct ActivityView5: View {
                                 .padding(10)
                                 .background(Color(white: 0.2))
                                 .clipShape(Circle())
-                                .shadow(color: Color(red: 38/255, green: 38/255, blue: 38/255),
-                                                radius: 0.25, x: 1, y: 1)
-                                        .shadow(color: Color(red: 77/255, green: 77/255, blue: 77/255),
-                                                radius: 0.25, x: 1, y: 1)
-                                        .shadow(color: Color(red: 77/255, green: 77/255, blue: 77/255),
-                                                radius: 0.55, x: -1, y: -1)
+//                                .shadow(color: Color(red: 38/255, green: 38/255, blue: 38/255),
+//                                                radius: 0.25, x: 1, y: 1)
+//                                        .shadow(color: Color(red: 77/255, green: 77/255, blue: 77/255),
+//                                                radius: 0.25, x: 1, y: 1)
+//                                        .shadow(color: Color(red: 77/255, green: 77/255, blue: 77/255),
+//                                                radius: 0.55, x: -1, y: -1)
                         }
                     }
                 }
@@ -269,7 +269,7 @@ struct ActivityView5: View {
                         .background(
                             Circle()
                                 .fill(Color(red: 0.8, green: 0.4, blue: 0))
-                                .shadow(color: .orange.opacity(0.3), radius: 20, y: 10)
+                                .shadow(color: .orange.opacity(0.3), radius: 90, y: 10)
                         )
                 }
                 
@@ -285,10 +285,10 @@ struct ActivityView5: View {
                                 .fill(Color(red: 0.1, green: 0.5, blue: 0.6))
                                 .shadow(color: Color(red: 38/255, green: 38/255, blue: 38/255),
                                                 radius: 0.25, x: 1, y: 1)
-                                        .shadow(color: Color(red: 77/255, green: 77/255, blue: 77/255),
+                                        .shadow(color: Color(red: 38/255, green: 38/255, blue: 38/255),
                                                 radius: 0.25, x: 1, y: 1)
-                                        .shadow(color: Color(red: 77/255, green: 77/255, blue: 77/255),
-                                                radius: 0.55, x: -1, y: -1)
+                                        .shadow(color: Color(red: 38/255, green: 38/255, blue: 38/255),
+                                                radius: 0.55, x: -2, y: -2)
                         )
                 }
                 
