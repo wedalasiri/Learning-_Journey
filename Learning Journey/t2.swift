@@ -255,6 +255,9 @@ struct ActivityView5: View {
                         )
                     }
                 }
+                
+                
+                
                 .padding(.horizontal)
                 
                 Spacer()
