@@ -187,7 +187,7 @@ struct ActivityView5: View {
             
             VStack(spacing: 25) {
                 
-                // MARK: - Header
+                //  Header
                 HStack {
                     Text("Activity")
                         .font(.largeTitle.bold())
@@ -200,31 +200,22 @@ struct ActivityView5: View {
                             Image(systemName: "calendar")
                                 .font(.system(size: 20))
                                 .foregroundColor(.white)
-                                .padding(10)
-                                .background(Color(white: 0.2))
+                                .padding(5)
                                 .clipShape(Circle())
-                                .shadow(color: Color(red: 38/255, green: 38/255, blue: 38/255),
-                                                radius: 0.25, x: 1, y: 1)
-                                        .shadow(color: Color(red: 77/255, green: 77/255, blue: 77/255),
-                                                radius: 0.25, x: 1, y: 1)
-                                        .shadow(color: Color(red: 77/255, green: 77/255, blue: 77/255),
-                                                radius: 0.55, x: -1, y: -1)
+                                .glassEffect(.clear)
                         }
+                        .buttonStyle(.glass)
                         
                         Button(action: {}) {
                             Image(systemName: "person.crop.circle")
                                 .font(.system(size: 20))
                                 .foregroundColor(.white)
-                                .padding(10)
-                                .background(Color(white: 0.2))
+                                .padding(5)
                                 .clipShape(Circle())
-//                                .shadow(color: Color(red: 38/255, green: 38/255, blue: 38/255),
-//                                                radius: 0.25, x: 1, y: 1)
-//                                        .shadow(color: Color(red: 77/255, green: 77/255, blue: 77/255),
-//                                                radius: 0.25, x: 1, y: 1)
-//                                        .shadow(color: Color(red: 77/255, green: 77/255, blue: 77/255),
-//                                                radius: 0.55, x: -1, y: -1)
+                                .glassEffect(.clear)
+
                         }
+                        .buttonStyle(.glass)
                     }
                 }
                 .padding(.horizontal)
@@ -247,6 +238,7 @@ struct ActivityView5: View {
                             color: Color(red: 0.35, green: 0.2, blue: 0)
                         )
                         
+                        
                         StatCard(
                             icon: "cube.fill",
                             count: 1,
@@ -255,6 +247,7 @@ struct ActivityView5: View {
                         )
                     }
                 }
+                
                 
                 
                 
@@ -269,12 +262,15 @@ struct ActivityView5: View {
                         .multilineTextAlignment(.center)
                         .foregroundColor(.white)
                         .frame(width: 250, height: 250)
+                        .glassEffect(.clear)
                         .background(
                             Circle()
                                 .fill(Color(red: 0.8, green: 0.4, blue: 0))
-                                .shadow(color: .orange.opacity(0.3), radius: 90, y: 10)
-                        )
+                                .glassEffect(.clear)
+                       )
                 }
+//                .buttonStyle(.glass)
+                
                 
                 // MARK: - Blue Button
                 Button(action: {}) {
@@ -282,18 +278,15 @@ struct ActivityView5: View {
                         .font(.system(size: 18, weight: .medium))
                         .foregroundColor(.white)
                         .frame(maxWidth: 300)
+                    
                         .padding()
+                        .glassEffect(.clear)
                         .background(
                             Capsule()
                                 .fill(Color(red: 0.1, green: 0.5, blue: 0.6))
-                                .shadow(color: Color(red: 38/255, green: 38/255, blue: 38/255),
-                                                radius: 0.25, x: 1, y: 1)
-                                        .shadow(color: Color(red: 38/255, green: 38/255, blue: 38/255),
-                                                radius: 0.25, x: 1, y: 1)
-                                        .shadow(color: Color(red: 38/255, green: 38/255, blue: 38/255),
-                                                radius: 0.55, x: -2, y: -2)
                         )
                 }
+//                .buttonStyle(.glass)
                 
                 // Footer
                 Text("1 out of 2 Freezes used")
@@ -387,10 +380,10 @@ struct WeekCalendarView: View {
             .padding(.horizontal, 8)
             .background(
                 RoundedRectangle(cornerRadius: 15)
-                    .fill(Color(red: 0.1, green: 0.1, blue: 0.1))
+//                    .fill(Color(red: 0.1, green: 0.1, blue: 0.1))
                     .overlay(
                         RoundedRectangle(cornerRadius: 15)
-                            .stroke(Color.orange, lineWidth: 2)
+//                            .stroke(Color.orange, lineWidth: 2)
                     )
             )
         }
@@ -414,6 +407,7 @@ struct WeekCalendarView: View {
         f.dateFormat = "MMMM yyyy"
         return f
     }
+    
 }
 
 // MARK: - Stat Card
