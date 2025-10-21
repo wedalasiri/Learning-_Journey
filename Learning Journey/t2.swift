@@ -11,177 +11,15 @@
 ////
 ////  Created by Wed Ahmed Alasiri on 24/04/1447 AH.
 ////
-//
-////import SwiftUI
-////import SwiftData
-////
-////struct ContentView44: View {
-////    var body: some View {
-////    
-////        VStack{
-////            Button(action: {
-////                
-////                print("start")
-////
-////            }
-////                   
-////            ) {
-////               
-////                
-////                Image("Primary")
-////                    .resizable()
-////                    .scaledToFit()
-////                    .frame(width: 282, height: 200)
-////                
-////                
-////            }
-////        }
-////        
-////        
-////        
-////        
-////    }
-////}
-////#Preview {
-////    ContentView44()
-//////        .modelContainer(for: Item.self, inMemory: true)
-////}
-//
-//
-//
-//import SwiftUI
-//
-//struct WeekCalendarView: View {
-//    @State private var currentDate = Date()
-//    
-//    private var calendar: Calendar {
-//        var cal = Calendar.current
-//        cal.firstWeekday = 1 // Sunday
-//        return cal
-//    }
-//    
-//    private var weekDates: [Date] {
-//        guard let weekInterval = calendar.dateInterval(of: .weekOfYear, for: currentDate) else { return [] }
-//        return (0..<7).compactMap { calendar.date(byAdding: .day, value: $0, to: weekInterval.start) }
-//    }
-//    
-//    var body: some View {
-//        VStack(alignment: .leading, spacing: 10) {
-//            
-//            // MARK: - Month Header
-//            HStack {
-//                Text(monthYearFormatter.string(from: currentDate))
-//                    .font(.headline)
-//                    .foregroundColor(.white)
-//                Spacer()
-//                HStack(spacing: 20) {
-//                    Button {
-//                        withAnimation {
-//                            currentDate = calendar.date(byAdding: .weekOfYear, value: -1, to: currentDate) ?? currentDate
-//                        }
-//                    } label: {
-//                        Image(systemName: "chevron.left")
-//                            .foregroundColor(.orange)
-//                    }
-//                    
-//                    Button {
-//                        withAnimation {
-//                            currentDate = calendar.date(byAdding: .weekOfYear, value: 1, to: currentDate) ?? currentDate
-//                        }
-//                    } label: {
-//                        Image(systemName: "chevron.right")
-//                            .foregroundColor(.orange)
-//                    }
-//                }
-//            }
-//            
-//            // MARK: - Week Days
-//            VStack(spacing: 8) {
-//                // Day names
-//                HStack {
-//                    ForEach(weekDates, id: \.self) { date in
-//                        Text(shortWeekdayFormatter.string(from: date))
-//                            .font(.caption)
-//                            .foregroundColor(.gray)
-//                            .frame(maxWidth: .infinity)
-//                    }
-//                }
-//                
-//                // Day numbers
-//                HStack {
-//                    ForEach(weekDates, id: \.self) { date in
-//                        let isToday = calendar.isDateInToday(date)
-//                        
-//                        ZStack {
-//                            if isToday {
-//                                Circle()
-//                                    .fill(Color.orange)
-//                            } else if date < Date() {
-//                                Circle()
-//                                    .fill(Color.orange.opacity(0.3))
-//                            } else {
-//                                Circle()
-//                                    .fill(Color.clear)
-//                            }
-//                            
-//                            Text(dayFormatter.string(from: date))
-//                                .font(.system(size: 17, weight: .medium))
-//                                .foregroundColor(.white)
-//                        }
-//                        .frame(width: 40, height: 40)
-//                        .frame(maxWidth: .infinity)
-//                    }
-//                }
-//            }
-//            .padding(.vertical, 10)
-//            .padding(.horizontal, 8)
-//            .background(
-//                RoundedRectangle(cornerRadius: 15)
-//                    .fill(Color(red: 0.1, green: 0.1, blue: 0.1))
-//                    .overlay(
-//                        RoundedRectangle(cornerRadius: 15)
-//                            .stroke(Color.orange, lineWidth: 2)
-//                    )
-//            )
-//        }
-//        .padding(.horizontal)
-//    }
-//    
-//    // MARK: - Formatters
-//    private var dayFormatter: DateFormatter {
-//        let f = DateFormatter()
-//        f.dateFormat = "d"
-//        return f
-//    }
-//    
-//    private var shortWeekdayFormatter: DateFormatter {
-//        let f = DateFormatter()
-//        f.dateFormat = "EEE"
-//        return f
-//    }
-//    
-//    private var monthYearFormatter: DateFormatter {
-//        let f = DateFormatter()
-//        f.dateFormat = "MMMM yyyy"
-//        return f
-//    }
-//}
-//
-//#Preview {
-//    ZStack {
-//        Color.black.ignoresSafeArea()
-//        WeekCalendarView()
-//    }
-//}
-
-
 
 import SwiftUI
 
 struct ActivityView5: View {
     @State private var currentDate = Date() // To sync with WeekCalendarView
     
+    
     var body: some View {
+        
         ZStack {
             Color.black.ignoresSafeArea()
             
@@ -262,15 +100,11 @@ struct ActivityView5: View {
                         .multilineTextAlignment(.center)
                         .foregroundColor(.white)
                         .frame(width: 250, height: 250)
-                        .glassEffect(.clear)
-                        .background(
-                            Circle()
-                                .fill(Color(red: 0.8, green: 0.4, blue: 0))
-                                .glassEffect(.clear)
-                       )
+
                 }
-//                .buttonStyle(.glass)
-                
+                .buttonStyle(.glassProminent)
+                .tint(Color(red: 1.0, green: 0.57, blue: 0.19))
+
                 
                 // MARK: - Blue Button
                 Button(action: {}) {
@@ -278,15 +112,16 @@ struct ActivityView5: View {
                         .font(.system(size: 18, weight: .medium))
                         .foregroundColor(.white)
                         .frame(maxWidth: 300)
-                    
                         .padding()
-                        .glassEffect(.clear)
-                        .background(
-                            Capsule()
-                                .fill(Color(red: 0.1, green: 0.5, blue: 0.6))
-                        )
+//                        .glassEffect(.clear)
+//                        .background(
+//                            Capsule()
+//                                .fill(Color(red: 0.1, green: 0.5, blue: 0.6))
+//                        )
                 }
-//                .buttonStyle(.glass)
+                .buttonStyle(.glassProminent)
+                .tint(Color(red: 0.0, green: 0.82, blue: 0.88))
+
                 
                 // Footer
                 Text("1 out of 2 Freezes used")
