@@ -63,6 +63,11 @@ struct First88: View {
                             .foregroundColor(.orange)
                             .frame(width: 40, height: 40)
                     }
+                    
+                    
+                    
+                    
+                    
 
                     // MARK: - الترحيب
                     VStack(alignment: .leading, spacing: 8) {
@@ -174,7 +179,7 @@ struct GlassButton77: View {
 // MARK: - تأثير الضغط (Scale)
 //
 
-struct ScaleButtonStyle77: ButtonStyle {
+struct ScaleButtonStyle7771: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .scaleEffect(configuration.isPressed ? 0.95 : 1.0)
