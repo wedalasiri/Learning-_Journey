@@ -82,6 +82,9 @@ struct ActivityView5: View {
                             count: 1,
                             label: "Day Freezed",
                             color: Color(red: 0.1, green: 0.25, blue: 0.35)
+                            
+//                            Image(systemName: "cube.fill")
+//                                .foregroundStyle(Color.bule11)
                         )
                     }
                 }
