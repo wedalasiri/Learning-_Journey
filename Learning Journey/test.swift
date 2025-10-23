@@ -10,6 +10,24 @@ struct ActivityView56: View {
     @State private var isPressedLearned = false
     @State private var isPressedFreezed = false
     @State private var lastPressedDate: Date? = nil
+  
+
+
+    var topic: String
+    var timeframe: String
+    var startDate: Date
+    var endDate: Date
+
+    
+    
+    // 🔹 الحد الأقصى للتجميد حسب المدة المختارة
+    var maxFreezesAllowed: Int {
+        switch timeframe {
+        case "Year": return 104
+        case "Month": return 9
+        default: return 2
+        }
+    }
 
 
     var body: some View {
@@ -19,7 +37,7 @@ struct ActivityView56: View {
             VStack(spacing: 25) {
                 // MARK: - Header
                 HStack {
-                    Text("Activity")
+                    Text("Activity wed ")
                         .font(.largeTitle.bold())
                         .foregroundColor(.white)
                     
@@ -37,7 +55,7 @@ struct ActivityView56: View {
                         .buttonStyle(.glass)
                         
                         Button(action: {}) {
-                            Image(systemName: "person.crop.circle")
+                            Image(systemName: "pencil.and.outline")
                                 .font(.system(size: 20))
                                 .foregroundColor(.white)
                                 .padding(5)
@@ -48,27 +66,28 @@ struct ActivityView56: View {
                     }
                 }
                 .padding(.horizontal)
+                .offset(y:5)  // pleace the elemant on screen
                 
                 // MARK: - Glassy Background Section
                 ZStack(alignment: .top) {
-                    RoundedRectangle(cornerRadius: 20)
-                        .fill(Color(red: 0.05, green: 0.05, blue: 0.05))
-                        .overlay(
+                    // الخلفية الأساسية
+                    Rectangle()
+                        .fill(
                             LinearGradient(
-                                colors: [
-                                    Color.white.opacity(0.05),
-                                    Color.black.opacity(0.05)
-                                ],
+                                colors: [Color.gray.opacity(0.45), Color.gray.opacity(0.25)],
                                 startPoint: .topLeading,
                                 endPoint: .bottomTrailing
                             )
                         )
+                        .frame(width: 375, height: 300)
+                        .cornerRadius(20)
+                        // تأثير الزجاج على الحواف فقط
                         .overlay(
                             RoundedRectangle(cornerRadius: 20)
-                                .stroke(Color.white.opacity(0.1), lineWidth: 0.5)
+                                .stroke(Color.white.opacity(0.15), lineWidth: 2)
+                                .glassEffect(.clear) // هنا التأثير يطبق على الحواف فقط
                         )
-                        .frame(width: 375, height: 300)
-                    
+
                     VStack(spacing: 16) {
                         // التقويم
                         TestWeekCalendarView(
@@ -82,10 +101,15 @@ struct ActivityView56: View {
 
                         // Learning Swift + الكبسولات
                         VStack(alignment: .leading, spacing: 12) {
-                            Text("Learning Swift")
-                                .font(.headline)
-                                .foregroundColor(.white)
+                            HStack(spacing: 4) {
+                                Text("Learning")
+                                    .font(.headline)
+                                    .foregroundColor(.white)
 
+                                Text(topic)
+                                    .font(.headline)
+                                    .foregroundColor(.white)
+                            }
                             HStack(spacing: 20) {
                                 TestStatCard(
                                     icon: "flame.fill",
@@ -107,8 +131,11 @@ struct ActivityView56: View {
                     .padding(.vertical, 20)
                 }
                 .padding(.horizontal)
+                .offset(y: 5)
 
-                Spacer()
+
+
+//                Spacer()
                 
                 
         
@@ -217,6 +244,7 @@ struct ActivityView56: View {
                     }
                 }
                 .buttonStyle(ScaleButtonStyle77())
+                .offset(y: -1) // pleace the elemant on screen
 
 
 
@@ -226,10 +254,18 @@ struct ActivityView56: View {
                     // شرط: لا يسمح بالضغط إذا تم الضغط على أي زر اليوم
                         guard lastPressedDate != today else { return }
                         
-                    if !freezedDates.contains(today) && !completedDates.contains(today) {
-                        freezedDates.append(today)
-                        freezedCount += 1
-                        lastPressedDate = today // نخزن اليوم كآخر يوم ضغطنا فيه
+                    if freezedCount < maxFreezesAllowed,
+                           !freezedDates.contains(today),
+                           !completedDates.contains(today) {
+                            freezedDates.append(today)
+                            freezedCount += 1
+                            lastPressedDate = today// نخزن اليوم كآخر يوم ضغطنا فيه
+                    
+                            isPressedFreezed = true
+                        
+                        
+                        
+                        
                     }
                     
                     // 🔹 خليه يصير شفاف بعد الضغط
@@ -244,26 +280,47 @@ struct ActivityView56: View {
                             Capsule()
                                 .fill(
                                     LinearGradient(
-                                        colors: freezedDates.contains(Calendar.current.startOfDay(for: Date())) ?
-                                            [Color.cyan.opacity(0.25), Color.cyan.opacity(0.1)] :  // بعد الضغط يبقى شفاف
-                                            [Color(red: 0.0, green: 0.82, blue: 0.88), Color.cyan.opacity(0.7)], // الحالة الأصلية
-                                        startPoint: .topLeading,
-                                        endPoint: .bottomTrailing
-                                    )
-                                )
+                                                  colors: isPressedFreezed ?
+                                                      [Color.blue.opacity(0.25), Color.blue.opacity(0.1)] :   // 🔹 شفاف بعد الضغط
+                                                      [Color(red: 0.0, green: 0.82, blue: 0.88), Color.cyan.opacity(0.7)], // اللون الأزرق الأصلي
+                                                  startPoint: .topLeading,
+                                                  endPoint: .bottomTrailing
+                                              )
+                                          )
 
 
                         )
                 }
+                
                 .buttonStyle(ScaleButtonStyle77())
+                .offset(y: -5) // pleace the elemant on screen
 
                 // MARK: - Footer
-                Text("\(freezedCount) out of 2 Freezes used")
+                Text("\(freezedCount) out of \(maxFreezesAllowed) Freezes used")
                     .font(.caption)
                     .foregroundColor(.gray)
-                    .padding(.bottom, 10)
+
+//                    .padding()
             }
-            .padding(.top, 10)
+            .onAppear {
+                let defaults = UserDefaults.standard
+                learnedCount = defaults.integer(forKey: "learnedCount")
+                freezedCount = defaults.integer(forKey: "freezedCount")
+                lastPressedDate = defaults.object(forKey: "lastPressedDate") as? Date
+
+                // Check if a new day has started
+                let today = Calendar.current.startOfDay(for: Date())
+                if lastPressedDate != today {
+                    isPressedLearned = false
+                    isPressedFreezed = false
+                }
+            }
+            
+            // 👇 this hides the back button
+                    .navigationBarBackButtonHidden(true)
+ //            .offset(y: -10) // pleace the elemant on screen
+
+            
         }
     }
 }
@@ -277,10 +334,12 @@ struct ScaleButtonStyle77: ButtonStyle {
     }
 }
 
-// MARK: - TestWeekCalendarView & TestStatCard
-// (نفس الكود اللي عندك تمامًا)
-
 
 #Preview {
-    ActivityView56()
+    ActivityView56(
+        topic: "Swift",
+        timeframe: "Week",
+        startDate: Date(),
+        endDate: Calendar.current.date(byAdding: .day, value: 7, to: Date())!
+    )
 }
