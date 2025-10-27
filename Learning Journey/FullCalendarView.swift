@@ -92,46 +92,38 @@ struct FullCalendarView: View {
         let isDone = doneDates.contains { calendar.isDate($0, inSameDayAs: date) }
         let isFreeze = freezeDates.contains { calendar.isDate($0, inSameDayAs: date) }
 
-        let circleColors: [Color] = {
-            if isDone {
-                return [Color.orange.opacity(0.25), Color.orange.opacity(0.1)]
-            } else if isFreeze {
-                return [Color.blue.opacity(0.25), Color.blue.opacity(0.1)]
+        // الألوان حسب الحالة
+        let bgColor: Color = {
+            if isFreeze {
+                return Color(red: 0.12, green: 0.29, blue: 0.36) // أزرق غامق
+            } else if isDone {
+                return Color(red: 0.26, green: 0.17, blue: 0.08) // برتقالي غامق
             } else {
-                return [Color.clear, Color.clear]
+                return .clear // باقي الأيام بدون خلفية
+            }
+        }()
+
+        let textColor: Color = {
+            if isFreeze {
+                return Color(red: 0.56, green: 0.80, blue: 0.96) // أزرق فاتح
+            } else if isDone {
+                return Color.orange // برتقالي فاتح
+            } else {
+                return Color.white // عادي
             }
         }()
 
         return Text("\(calendar.component(.day, from: date))")
-            .frame(width: 35, height: 35)
+            .font(.system(size: 18, weight: .bold))
+            .frame(width: 42, height: 42)
             .background(
                 Circle()
-                    .fill(
-                        LinearGradient(
-                            colors: circleColors,
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        )
-                    )
+                    .fill(bgColor)
             )
-            .overlay(
-                Circle()
-                    .stroke(
-                        LinearGradient(
-                            colors: isDone ?
-                                [Color.white.opacity(0.6), Color.orange.opacity(0.2)] :
-                                isFreeze ?
-                                    [Color.white.opacity(0.6), Color.blue.opacity(0.2)] :
-                                    [Color.clear, Color.clear],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        ),
-                        lineWidth: 1
-                    )
-                    .blur(radius: isDone || isFreeze ? 0.5 : 0)
-            )
-            .foregroundColor(.white)
+            .foregroundColor(textColor)
     }
+
+
 
 
     // MARK: - Helpers

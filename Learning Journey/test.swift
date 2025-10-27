@@ -1,4 +1,3 @@
-
 import SwiftUI
 
 struct ActivityView56: View {
@@ -10,18 +9,31 @@ struct ActivityView56: View {
     @State private var isPressedLearned = false
     @State private var isPressedFreezed = false
     @State private var lastPressedDate: Date? = nil
-    
     @State private var showFullCalendar = false
-    
-    @State private var goToِِEditView = false // في ActivityView56
-    
+    @State private var goToِِEditView = false
+
     @AppStorage("doneDates") private var doneDatesData: Data = Data()
     @AppStorage("freezeDates") private var freezeDatesData: Data = Data()
     
     var topic: String
     var timeframe: String
-    var startDate: Date
-    var endDate: Date
+    @State var startDate: Date
+    @State var endDate: Date
+    
+    @State private var showMonthPicker = false
+    @State private var selectedMonth = Calendar.current.component(.month, from: Date())
+    @State private var selectedYear = Calendar.current.component(.year, from: Date())
+    
+
+    
+    // Formatter لعرض أسماء الشهور
+    private let monthFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_US") // أو "ar_SA" لو تبي أسماء الشهور بالعربي
+        formatter.dateFormat = "MMMM"
+        return formatter
+    }()
+
     
     // 🔹 الحد الأقصى للتجميد حسب المدة المختارة
     var maxFreezesAllowed: Int {
@@ -36,116 +48,105 @@ struct ActivityView56: View {
         ZStack {
             Color.black.ignoresSafeArea()
             
-            let goalCompleted = Date() > endDate// ثابت عشان اذا خلصت المده الي اخترها تطلع له الرساله 
-            
-            if goalCompleted {
-                // ✅ واجهة "Well done!" بعد انتهاء الهدف
-                VStack(spacing: 20) {
-                    Image(systemName: "hands.clap.fill")
-                        .font(.system(size: 60))
-                        .foregroundColor(.orange)
-                        .padding(.bottom, 10)
-                    
-                    Text("Well done!")
+            VStack(spacing: 25) {
+                // MARK: - Header
+                HStack {
+                    Text("Activity ")
                         .font(.largeTitle.bold())
                         .foregroundColor(.white)
                     
-                    Text("Goal completed! Start learning again or set a new learning goal.")
-                        .foregroundColor(.gray)
-                        .multilineTextAlignment(.center)
-                        .padding(.horizontal)
+                    Spacer()
                     
-                    Button(action: {
-                        // أكشن لتعيين هدف جديد
-                        goToِِEditView = true
-                    }) {
-                        Text("Set new learning goal")
-                            .font(.system(size: 18, weight: .bold))
-                            .foregroundColor(.white)
-                            .frame(maxWidth: 280)
-                            .padding()
-                            .background(
-                                Capsule()
-                                    .fill(LinearGradient(
-                                        colors: [Color.orange, Color.orange.opacity(0.8)],
-                                        startPoint: .topLeading,
-                                        endPoint: .bottomTrailing
-                                    ))
-                            )
-                    }
-                    
-                    Button(action: {
-                        // أكشن لتعيين نفس الهدف
-                        // ممكن ترجع تعيد العداد أو تعيد نفس القيم
-                    }) {
-                        Text("Set same learning goal and duration")
-                            .font(.system(size: 16))
-                            .foregroundColor(.orange)
-                    }
-                    .padding(.top, 5)
-                }
-                .padding()
-            } else {
-                VStack(spacing: 25) {
-                    // 👇 حط هنا كل كودك الحالي مثل ما هو (الهيدر، الدائرة، الأزرار...)
-                    
-                    // MARK: - Header
-                    HStack {
-                        Text("Activity wed ")
-                            .font(.largeTitle.bold())
-                            .foregroundColor(.white)
-                        
-                        Spacer()
-                        
-                        HStack(spacing: 6) {
-                            NavigationLink(destination: FullCalendarView()) {
-                                Image(systemName: "calendar")
-                                    .font(.system(size: 20))
-                                    .foregroundColor(.white)
-                                    .padding(5)
-                                    .glassEffect(.clear)
-                            }
-                            .buttonStyle(.glass)
-                            
-                            // استبدال NavigationLink القديم بزر فقط
-                            Button(action: {
-                                goToِِEditView = true
-                            }) {
-                                Image(systemName: "pencil.and.outline")
-                                    .font(.system(size: 20))
-                                    .foregroundColor(.white)
-                                    .padding(5)
-                                    .glassEffect(.clear)
-                            }
-                            .buttonStyle(.glass)
+                    HStack(spacing: 6) {
+                        NavigationLink(destination: FullCalendarView()) {
+                            Image(systemName: "calendar")
+                                .font(.system(size: 20))
+                                .foregroundColor(.white)
+                                .padding(5)
+                                .glassEffect(.clear)
                         }
+                        .buttonStyle(.glass)
                         
+                        Button(action: {
+                            goToِِEditView = true
+                        }) {
+                            Image(systemName: "pencil.and.outline")
+                                .font(.system(size: 20))
+                                .foregroundColor(.white)
+                                .padding(5)
+                                .glassEffect(.clear)
+                        }
+                        .buttonStyle(.glass)
                     }
-                    .padding(.horizontal)
-                    .offset(y:5)  // pleace the elemant on screen
+                }
+                .padding(.horizontal)
+                .offset(y:5)
+                
+                
+                
+                
+                // MARK: - Glassy Background Section
+                ZStack(alignment: .top) {
+                    Rectangle()
+                        .fill(
+                            LinearGradient(
+                                colors: [Color.gray.opacity(0.45), Color.gray.opacity(0.25)],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                        .frame(width: 375, height: 300)
+                        .cornerRadius(20)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 20)
+                                .stroke(Color.white.opacity(0.15), lineWidth: 2)
+                        )
+                        .zIndex(0)
                     
-                    // MARK: - Glassy Background Section
-                    ZStack(alignment: .top) {
-                        // الخلفية الأساسية
-                        Rectangle()
-                            .fill(
-                                LinearGradient(
-                                    colors: [Color.gray.opacity(0.45), Color.gray.opacity(0.25)],
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
-                                )
-                            )
-                            .frame(width: 375, height: 300)
-                            .cornerRadius(20)
-                        // تأثير الزجاج على الحواف فقط
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 20)
-                                    .stroke(Color.white.opacity(0.15), lineWidth: 2)
-                                    .glassEffect(.clear) // هنا التأثير يطبق على الحواف فقط
-                            )
+                    // ✅ هنا نبدّل بين التقويم والـ Picker
+                    if showMonthPicker {
+                        VStack {
+                            HStack {
+                                Picker("Select Month", selection: $selectedMonth) {
+                                    ForEach(1...12, id: \.self) { month in
+                                        Text(monthFormatter.string(from: Calendar.current.date(from: DateComponents(year: selectedYear, month: month))!))
+                                            .tag(month)
+                                    }
+                                }
+                                .pickerStyle(.wheel)
+                                .frame(width: 150, height: 120)
+                                
+                                Picker("Select Year", selection: $selectedYear) {
+                                    ForEach(2020...9000, id: \.self) { year in
+                                        Text("\(year)").tag(year)
+                                    }
+                                }
+                                .pickerStyle(.wheel)
+                                .frame(width: 200, height: 220)
+                            }
+                            
+                            Button("Done") {
+                                withAnimation(.easeInOut) {
+                                    updateSelectedDate()
+                                    showMonthPicker = false
+                                }
+                            }
+                            .padding(.top, 8)
+                            .foregroundColor(.orange)
+                        }
+                        .padding()
+                        .background(Color.black.opacity(0.85))
+                        .cornerRadius(20)
+                        .transition(.opacity)
+                        .zIndex(1) // تأكد أنه فوق المربع وليس تحته
                         
+                        
+                        
+                        
+                        
+                        
+                    } else {
                         VStack(spacing: 16) {
-                            // التقويم
                             TestWeekCalendarView(
                                 selectedDate: $currentDate,
                                 doneDates: completedDates,
@@ -155,7 +156,6 @@ struct ActivityView56: View {
                             
                             Divider().background(Color.white.opacity(0.15))
                             
-                            // Learning Swift + الكبسولات
                             VStack(alignment: .leading, spacing: 12) {
                                 HStack(spacing: 4) {
                                     Text("Learning")
@@ -185,152 +185,59 @@ struct ActivityView56: View {
                             .padding(.horizontal)
                         }
                         .padding(.vertical, 20)
+                        .transition(.opacity)
+                        .zIndex(0)
                     }
-                    .padding(.horizontal)
-                    .offset(y: 5)
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    let goalCompleted = Date() > endDate
+                }
+                .padding(.horizontal)
+                .offset(y: 5)
 
-                    if goalCompleted {
-                        // ✅ شاشة النهاية "Well done!"
-                        VStack(spacing: 20) {
-                            Image(systemName: "hands.clap.fill")
-                                .font(.system(size: 60))
-                                .foregroundColor(.orange)
-                                .padding(.bottom, 10)
-                                .symbolEffect(.bounce, options: .repeat(2), value: 1)
-                            
-                            Text("Well done!")
-                                .font(.largeTitle.bold())
-                                .foregroundColor(.white)
-                            
-                            Text("Goal completed! Start learning again or set a new learning goal")
-                                .foregroundColor(.gray)
-                                .multilineTextAlignment(.center)
-                                .padding(.horizontal)
-                            
-                            Button(action: {
-                                // ✅ يروح لشاشة تعديل الهدف
-                                goToِِEditView = true
-                            }) {
-                                Text("Set new learning goal")
-                                    .font(.system(size: 18, weight: .bold))
-                                    .foregroundColor(.white)
-                                    .frame(maxWidth: 280)
-                                    .padding()
-                                    .background(
-                                        Capsule()
-                                            .fill(
-                                                LinearGradient(
-                                                    colors: [Color.orange, Color.orange.opacity(0.8)],
-                                                    startPoint: .topLeading,
-                                                    endPoint: .bottomTrailing
-                                                )
-                                            )
-                                    )
-                            }
-                            
-                            Button(action: {
-                                // ✅ تعيين نفس الهدف والمدة (تقدر تخصصه)
-                            }) {
-                                Text("Set same learning goal and duration")
-                                    .font(.system(size: 16))
-                                    .foregroundColor(.orange)
-                            }
-                            .padding(.top, 5)
-                        }
-                        .padding(.top, 40)
+
+                
+                
+                
+                
+                // MARK: - Conditional Section (Buttons OR Well done)
+                let goalCompleted = Date() > endDate
+                
+                if goalCompleted {
+                    // ✅ شاشة النهاية "Well done!"
+                    VStack(spacing: 8) {
+                        Image(systemName: "hands.and.sparkles.fill")
+                            .font(.system(size: 40))
+                            .foregroundColor(.orange)
+                            .padding(.bottom, 10)
+                            .symbolEffect(.bounce, options: .repeat(2), value: 1)
+                            .offset(y: -80)
+                            .padding(.top,50)
                         
-                    } else {
-                        // 🔸 الأزرار الأصلية قبل انتهاء المدة
-                        Button(action: {
-                            let today = Calendar.current.startOfDay(for: Date())
-                            guard lastPressedDate != today else { return }
-                            
-                            if !completedDates.contains(today) && !freezedDates.contains(today) {
-                                completedDates.append(today)
-                                learnedCount += 1
-                                lastPressedDate = today
-                                saveDates()
-                            }
-                            isPressedLearned = true
-                            UserDefaults.standard.set(true, forKey: "isPressedLearned")
-                        }) {
-                            ZStack {
-                                Circle()
-                                    .fill(
-                                        LinearGradient(
-                                            colors: isPressedFreezed ?
-                                            [Color.blue.opacity(0.25), Color.blue.opacity(0.1)] :
-                                            (completedDates.contains(Calendar.current.startOfDay(for: Date())) ?
-                                             [Color.orange.opacity(0.25), Color.orange.opacity(0.1)] :
-                                             [Color(red: 1.0, green: 0.57, blue: 0.19), Color.orange.opacity(0.7)]),
-                                            startPoint: .topLeading,
-                                            endPoint: .bottomTrailing
-                                        )
-                                    )
-                                    .glassEffect(.clear)
-                                    .frame(width: 250, height: 250)
-                                    .overlay(
-                                        Circle()
-                                            .stroke(
-                                                LinearGradient(
-                                                    colors: [
-                                                        Color.white.opacity(0.6),
-                                                        Color.orange.opacity(0.2)
-                                                    ],
-                                                    startPoint: .topLeading,
-                                                    endPoint: .bottomTrailing
-                                                ),
-                                                lineWidth: 1
-                                            )
-                                            .blur(radius: 0.5)
-                                    )
-                                
-                                Text(isPressedFreezed ? "Day \nFreezed" : (isPressedLearned ? "Learned\nToday" : "Log as\nLearned"))
-                                    .font(.system(size: 28, weight: .bold))
-                                    .multilineTextAlignment(.center)
-                                    .foregroundColor(isPressedFreezed ? Color.cyan : (isPressedLearned ? Color.orange : Color.white))
-                            }
-                        }
-                        .buttonStyle(ScaleButtonStyle77())
-                        .offset(y: -1)
+                        
+                        Text("Will done!")
+                            .font(.largeTitle.bold())
+                            .foregroundColor(.white)
+                            .offset(y: -80)
 
-                        // 🔹 الزر الأزرق
+                         
+                        
+                        Text("Goal completed! Start learning again or set new learning goal.")
+                            .foregroundColor(.gray)
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal)
+                            .offset(y: -80)
+                        
                         Button(action: {
-                            let today = Calendar.current.startOfDay(for: Date())
-                            guard lastPressedDate != today else { return }
-                            
-                            if freezedCount < maxFreezesAllowed,
-                               !freezedDates.contains(today),
-                               !completedDates.contains(today) {
-                                freezedDates.append(today)
-                                freezedCount += 1
-                                lastPressedDate = today
-                                saveDates()
-                                
-                                isPressedFreezed = true
-                                UserDefaults.standard.set(true, forKey: "isPressedFreezed")
-                            }
+                            goToِِEditView = true
                         }) {
-                            Text("Day Freezed")
+                            Text("Set new learning goal")
                                 .font(.system(size: 18, weight: .bold))
-                                .foregroundColor(isPressedFreezed ? Color.cyan : Color.white)
+                                .foregroundColor(Color.white)
                                 .frame(maxWidth: 300)
                                 .padding()
                                 .background(
                                     Capsule()
                                         .fill(
                                             LinearGradient(
-                                                colors: isPressedFreezed
-                                                ? [Color.cyan.opacity(0.25), Color.cyan.opacity(0.1)]
-                                                : [Color(red: 0.0, green: 0.82, blue: 0.88), Color.cyan.opacity(0.7)],
+                                                colors: [Color.orange, Color.orange.opacity(0.7)],
                                                 startPoint: .topLeading,
                                                 endPoint: .bottomTrailing
                                             )
@@ -342,7 +249,7 @@ struct ActivityView56: View {
                                             LinearGradient(
                                                 colors: [
                                                     Color.white.opacity(0.6),
-                                                    Color.cyan.opacity(0.3)
+                                                    Color.orange.opacity(0.3)
                                                 ],
                                                 startPoint: .topLeading,
                                                 endPoint: .bottomTrailing
@@ -353,38 +260,197 @@ struct ActivityView56: View {
                                 )
                         }
                         .buttonStyle(ScaleButtonStyle77())
-                        .offset(y: -5)
+                        .offset(y: -25)
+
+
+                        
+                        
+
+                        Button(action: {
+                            // ✅ تصفير العدادات
+                            learnedCount = 0
+                            freezedCount = 0
+                            
+                            // ✅ حذف التواريخ
+                            completedDates.removeAll()
+                            freezedDates.removeAll()
+                            
+                            // ✅ حفظ التغييرات
+                            saveDates()
+                            
+                            // ✅ إعادة ضبط آخر يوم ضغط فيه
+                            lastPressedDate = nil
+                            isPressedLearned = false
+                            isPressedFreezed = false
+                            
+                            // ✅ تعيين تاريخ بداية جديد (اليوم)
+                            let newStart = Date()
+                            let calendar = Calendar.current
+                            
+                            switch timeframe {
+                            case "Year":
+                                startDate = newStart
+                                endDate = calendar.date(byAdding: .year, value: 1, to: newStart) ?? newStart
+                            case "Month":
+                                startDate = newStart
+                                endDate = calendar.date(byAdding: .month, value: 1, to: newStart) ?? newStart
+                            default: // Week
+                                startDate = newStart
+                                endDate = calendar.date(byAdding: .day, value: 7, to: newStart) ?? newStart
+                            }
+                            
+                            // ✅ تحديث الحالة عشان يعيد عرض الواجهة بدون رسالة "Well done!"
+                            currentDate = newStart
+                        }) {
+                            Text("Set same learning goal and duration")
+                                .font(.system(size: 20))
+                                .foregroundColor(.orange)
+                        }
+                        .padding(.top, 5)
+
+                        .offset(y:-10)
+
                     }
+                    .padding(.top, 40)
+                
+
+                    
+                } else {
+                    // 🔸 الأزرار الأصلية قبل انتهاء المدة
+                    Button(action: {
+                        let today = Calendar.current.startOfDay(for: Date())
+                        guard lastPressedDate != today else { return }
+                        
+                        if !completedDates.contains(today) && !freezedDates.contains(today) {
+                            completedDates.append(today)
+                            learnedCount += 1
+                            lastPressedDate = today
+                            saveDates()
+                        }
+                        isPressedLearned = true
+                        UserDefaults.standard.set(true, forKey: "isPressedLearned")
+                    }) {
+                        ZStack {
+                            Circle()
+                                .fill(
+                                    LinearGradient(
+                                        colors: isPressedFreezed ?
+                                        [Color.blue.opacity(0.25), Color.blue.opacity(0.1)] :
+                                        (completedDates.contains(Calendar.current.startOfDay(for: Date())) ?
+                                         [Color.orange.opacity(0.25), Color.orange.opacity(0.1)] :
+                                         [Color(red: 1.0, green: 0.57, blue: 0.19), Color.orange.opacity(0.7)]),
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    )
+                                )
+                                .glassEffect(.clear)
+                                .frame(width: 250, height: 250)
+                                .overlay(
+                                    Circle()
+                                        .stroke(
+                                            LinearGradient(
+                                                colors: [
+                                                    Color.white.opacity(0.6),
+                                                    Color.orange.opacity(0.2)
+                                                ],
+                                                startPoint: .topLeading,
+                                                endPoint: .bottomTrailing
+                                            ),
+                                            lineWidth: 1
+                                        )
+                                        .blur(radius: 0.5)
+                                )
+                            
+                            Text(isPressedFreezed ? "Day \nFreezed" : (isPressedLearned ? "Learned\nToday" : "Log as\nLearned"))
+                                .font(.system(size: 28, weight: .bold))
+                                .multilineTextAlignment(.center)
+                                .foregroundColor(isPressedFreezed ? Color.cyan : (isPressedLearned ? Color.orange : Color.white))
+                        }
+                    }
+                    .buttonStyle(ScaleButtonStyle77())
+                    .offset(y: -1)
+                    
+                    Button(action: {
+                        let today = Calendar.current.startOfDay(for: Date())
+                        guard lastPressedDate != today else { return }
+                        
+                        if freezedCount < maxFreezesAllowed,
+                           !freezedDates.contains(today),
+                           !completedDates.contains(today) {
+                            freezedDates.append(today)
+                            freezedCount += 1
+                            lastPressedDate = today
+                            saveDates()
+                            
+                            isPressedFreezed = true
+                            UserDefaults.standard.set(true, forKey: "isPressedFreezed")
+                        }
+                    }) {
+                        Text("Day Freezed")
+                            .font(.system(size: 18, weight: .bold))
+                            .foregroundColor(isPressedFreezed ? Color.cyan : Color.white)
+                            .frame(maxWidth: 300)
+                            .padding()
+                            .background(
+                                Capsule()
+                                    .fill(
+                                        LinearGradient(
+                                            colors: isPressedFreezed
+                                            ? [Color.cyan.opacity(0.25), Color.cyan.opacity(0.1)]
+                                            : [Color(red: 0.0, green: 0.82, blue: 0.88), Color.cyan.opacity(0.7)],
+                                            startPoint: .topLeading,
+                                            endPoint: .bottomTrailing
+                                        )
+                                    )
+                            )
+                            .overlay(
+                                Capsule()
+                                    .stroke(
+                                        LinearGradient(
+                                            colors: [
+                                                Color.white.opacity(0.6),
+                                                Color.cyan.opacity(0.3)
+                                            ],
+                                            startPoint: .topLeading,
+                                            endPoint: .bottomTrailing
+                                        ),
+                                        lineWidth: 1
+                                    )
+                                    .blur(radius: 0.5)
+                            )
+                    }
+                    .buttonStyle(ScaleButtonStyle77())
+                    .offset(y: -5)
                     
                     // MARK: - Footer
                     Text("\(freezedCount) out of \(maxFreezesAllowed) Freezes used")
                         .font(.caption)
                         .foregroundColor(.gray)
                 }
-                .onAppear {
-                    let defaults = UserDefaults.standard
-                    learnedCount = defaults.integer(forKey: "learnedCount")
-                    freezedCount = defaults.integer(forKey: "freezedCount")
-                    lastPressedDate = defaults.object(forKey: "lastPressedDate") as? Date
-                    
-                    // Check if a new day has started
-                    let today = Calendar.current.startOfDay(for: Date())
-                    if lastPressedDate != today {
-                        isPressedLearned = false
-                        isPressedFreezed = false
-                    }
-                }
-                // 👇 this hides the back button
-                .navigationBarBackButtonHidden(true)
-                // Attach the modern navigation destination here
-                .navigationDestination(isPresented: $goToِِEditView) {
-                    EditView()
+                
+//                // MARK: - Footer
+//                Text("\(freezedCount) out of \(maxFreezesAllowed) Freezes used")
+//                    .font(.caption)
+//                    .foregroundColor(.gray)
+            }
+            .onAppear {
+                let defaults = UserDefaults.standard
+                learnedCount = defaults.integer(forKey: "learnedCount")
+                freezedCount = defaults.integer(forKey: "freezedCount")
+                lastPressedDate = defaults.object(forKey: "lastPressedDate") as? Date
+                
+                let today = Calendar.current.startOfDay(for: Date())
+                if lastPressedDate != today {
+                    isPressedLearned = false
+                    isPressedFreezed = false
                 }
             }
+            .navigationBarBackButtonHidden(true)
+            .navigationDestination(isPresented: $goToِِEditView) {
+                EditView()
+            }
         }
-        
     }
-    //عشان تطلع في زر التقويم الكامل الدواير
     
     func saveDates() {
         if let encoded = try? JSONEncoder().encode(completedDates) {
@@ -394,16 +460,15 @@ struct ActivityView56: View {
             freezeDatesData = encoded
         }
     }
-
-}
-
-// MARK: - ScaleButtonStyle77 (نفس ستايل الضغط)
-struct ScaleButtonStyle77: ButtonStyle {
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .scaleEffect(configuration.isPressed ? 0.95 : 1.0)
-            .animation(.spring(response: 0.3, dampingFraction: 0.6), value: configuration.isPressed)
+    
+    // تحديث التاريخ الحالي بناءً على الشهر والسنة المختارين
+    func updateSelectedDate() {
+        let calendar = Calendar.current
+        if let newDate = calendar.date(from: DateComponents(year: selectedYear, month: selectedMonth, day: 1)) {
+            currentDate = newDate
+        }
     }
+
 }
 
 #Preview {
@@ -413,9 +478,8 @@ struct ScaleButtonStyle77: ButtonStyle {
             timeframe: "Week",
             startDate: Date(),
             endDate: Calendar.current.date(byAdding: .day, value: 7, to: Date())!
-            //endDate: Calendar.current.date(byAdding: .day, value: -1, to: Date())!
+//            endDate: Calendar.current.date(byAdding: .day, value: -1, to: Date())!
 
         )
     }
 }
-

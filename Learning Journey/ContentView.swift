@@ -124,25 +124,6 @@ struct First88: View {
     }
     
 }
-    // MARK: - الزر الزجاجي
-    struct GlassButton77: View {
-        var title: String
-        var isSelected: Bool = true
-        var action: () -> Void
-        
-        var body: some View {
-            Button(action: action) {
-                Text(title)
-                    .font(.system(size: 16, weight: .bold))
-                    .foregroundColor(.white)
-                    .padding(.horizontal, 20)
-                    .padding(.vertical, 10)
-                    .opacity(isSelected ? 0.9 : 0.6)
-            }
-            .buttonStyle(.glassProminent)
-            .tint(isSelected ? Color.orange : Color.gray.opacity(0.4))
-        }
-    }
 
     #Preview {
         First88()

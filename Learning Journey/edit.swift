@@ -195,7 +195,7 @@ struct EditView: View {
                                         endPoint: .bottomTrailing
                                     )
                                 )
-                                .glassEffect(.clear) // 👈 نفس التأثير الزجاجي
+//                                .glassEffect(.clear) // 👈 نفس التأثير الزجاجي
                         )
                         
                         
