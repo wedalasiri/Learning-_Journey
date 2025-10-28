@@ -1,9 +1,39 @@
 import SwiftUI
 
+struct TestStatCard8: View {
+    var icon: String
+    var count: Int
+    var label: String
+    var color: Color
+    
+    var body: some View {
+        VStack {
+            Image(systemName: icon)
+                .foregroundColor(.orange)
+                .font(.system(size: 22))
+            Text("\(count)")
+                .font(.system(size: 22, weight: .bold))
+                .foregroundColor(.white)
+            Text(label)
+                .foregroundColor(.white)
+                .font(.system(size: 14))
+        }
+        .frame(maxWidth: .infinity)
+        .padding()
+        .background(color)
+        .cornerRadius(18)
+    }
+}
+
 struct CalendarSummaryView: View {
     @State private var showPicker = false
     @State private var selectedMonth = "October"
     @State private var selectedYear = 2025
+    
+    // بيانات جديدة للملخص
+    @State private var topic = "Swift"
+    @State private var learnedCount = 0
+    @State private var freezedCount = 0
     
     let days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
     let dates = [19, 20, 21, 22, 23, 24, 25]
@@ -36,10 +66,10 @@ struct CalendarSummaryView: View {
                             RoundedRectangle(cornerRadius: 30)
                                 .stroke(Color.white.opacity(0.15), lineWidth: 1)
                         )
-                        .frame(width: 375, height: 300) // حجم المربع ثابت
+                        .frame(width: 375, height: 300)
                     
                     VStack(spacing: 16) {
-                        // الهيدر يكون في بداية المربع
+                        // الهيدر في بداية المربع
                         HStack {
                             Text("\(selectedMonth) \(selectedYear)")
                                 .font(.system(size: 22, weight: .bold))
@@ -55,14 +85,16 @@ struct CalendarSummaryView: View {
                             Spacer()
                         }
                         .padding(.horizontal)
-                        .padding(12)
+                        .offset(y: 0)
                         
-                        // Picker أو التقويم يظهر أسفل الهيدر
+                        // Picker أو التقويم
                         if showPicker {
                             HStack(spacing: 0) {
                                 Picker("Month", selection: $selectedMonth) {
                                     ForEach(months, id: \.self) { month in
                                         Text(month).tag(month)
+                                            .foregroundColor(.white) // ← هنا التعديل
+
                                     }
                                 }
                                 .pickerStyle(.wheel)
@@ -71,7 +103,10 @@ struct CalendarSummaryView: View {
                                 
                                 Picker("Year", selection: $selectedYear) {
                                     ForEach(years, id: \.self) { year in
-                                        Text("\(year)").tag(year)
+                                        Text(String(format: "%d", year)) // ← يجبرها بدون فاصلة
+                                            .tag(year)
+                                            .foregroundColor(.white) // ← هنا التعديل
+
                                     }
                                 }
                                 .pickerStyle(.wheel)
@@ -80,7 +115,7 @@ struct CalendarSummaryView: View {
                             }
                             .frame(height: 160)
                         } else {
-                            // التقويم الأسبوعي وملخص التعلم
+                            // التقويم الأسبوعي وملخص التعلم الجديد
                             VStack(spacing: 12) {
                                 // Weekdays
                                 HStack {
@@ -120,50 +155,34 @@ struct CalendarSummaryView: View {
                                     .background(Color.white.opacity(0.15))
                                     .padding(.horizontal)
                                 
-                                // Learning summary
-                                VStack(alignment: .leading, spacing: 15) {
-                                    Text("Learning Swift")
-                                        .font(.system(size: 20, weight: .bold))
-                                        .foregroundColor(.white)
-                                        .padding(.horizontal)
-                                    
-                                    HStack(spacing: 16) {
-                                        // Days Learned
-                                        VStack {
-                                            Image(systemName: "flame.fill")
-                                                .foregroundColor(.orange)
-                                                .font(.system(size: 22))
-                                            Text("0")
-                                                .font(.system(size: 22, weight: .bold))
-                                                .foregroundColor(.white)
-                                            Text("Days Learned")
-                                                .foregroundColor(.white)
-                                                .font(.system(size: 14))
-                                        }
-                                        .frame(maxWidth: .infinity)
-                                        .padding()
-                                        .background(Color(red: 0.30, green: 0.20, blue: 0.05))
-                                        .cornerRadius(18)
+                                // ملخص التعلم الجديد
+                                VStack(alignment: .leading, spacing: 12) {
+                                    HStack(spacing: 4) {
+                                        Text("Learning")
+                                            .font(.headline)
+                                            .foregroundColor(.white)
                                         
-                                        // Days Freezed
-                                        VStack {
-                                            Image(systemName: "cube.fill")
-                                                .foregroundColor(.orange)
-                                                .font(.system(size: 22))
-                                            Text("0")
-                                                .font(.system(size: 22, weight: .bold))
-                                                .foregroundColor(.white)
-                                            Text("Days Freezed")
-                                                .foregroundColor(.white)
-                                                .font(.system(size: 14))
-                                        }
-                                        .frame(maxWidth: .infinity)
-                                        .padding()
-                                        .background(Color(red: 0.05, green: 0.20, blue: 0.35))
-                                        .cornerRadius(18)
+                                        Text(topic)
+                                            .font(.headline)
+                                            .foregroundColor(.white)
                                     }
-                                    .padding(.horizontal)
+                                    HStack(spacing: 20) {
+                                        TestStatCard(
+                                            icon: "flame.fill",
+                                            count: learnedCount,
+                                            label: "Days Learned",
+                                            color: Color(red: 0.35, green: 0.2, blue: 0)
+                                        )
+                                        
+                                        TestStatCard(
+                                            icon: "cube.fill",
+                                            count: freezedCount,
+                                            label: "Days Freezed",
+                                            color: Color(red: 0.1, green: 0.25, blue: 0.35)
+                                        )
+                                    }
                                 }
+                                .padding(.horizontal)
                             }
                         }
                     }
@@ -180,3 +199,8 @@ struct CalendarSummaryView: View {
 #Preview {
     CalendarSummaryView()
 }
+
+
+
+
+

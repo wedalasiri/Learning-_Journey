@@ -43,37 +43,26 @@ struct ScaleButtonStyle77: ButtonStyle {
 }
 
 
+import SwiftUI
+
 struct TestWeekCalendarView: View {
     @Binding var selectedDate: Date
     var doneDates: [Date]
     var freezeDates: [Date]
-    
 
-
-    
-    @State private var showMonthPicker = false
-    @State private var selectedMonth = Calendar.current.component(.month, from: Date())
-    @State private var selectedYear = Calendar.current.component(.year, from: Date())
-    
     private let calendar = Calendar.current
+    @State  var showPicker = false // <-- needed for chevron toggle
+
     
+ 
     var body: some View {
         VStack(spacing: 16) {
-            // MARK: - Header with Month + Picker Button
+            // MARK: - Header with Month and Week Navigation
             HStack {
-                Text(monthYearFormatter.string(from: selectedDate))
-                    .font(.headline)
-                    .foregroundColor(.white)
-                
-                Button {
-                    withAnimation {
-                        showMonthPicker.toggle()
-                    }
-                } label: {
-                    Image(systemName: "chevron.down")
-                        .foregroundColor(.orange)
-                }
-                
+//                Text(monthYearFormatter.string(from: selectedDate))
+//                    .font(.headline)
+//                    .foregroundColor(.white)
+//                
                 Spacer()
                 
                 HStack(spacing: 20) {
@@ -85,6 +74,7 @@ struct TestWeekCalendarView: View {
                         Image(systemName: "chevron.left")
                             .foregroundColor(.orange)
                     }
+
                     
                     Button {
                         withAnimation {
@@ -95,81 +85,24 @@ struct TestWeekCalendarView: View {
                             .foregroundColor(.orange)
                     }
                 }
+                .offset(y:-20)
+
             }
             
-            
-            
-            // MARK: - Month Picker
-           
-                if showMonthPicker {
-                    VStack {
-                        HStack {
-                            Picker("Select Month", selection: $selectedMonth) {
-                                ForEach(1...12, id: \.self) { month in
-                                    Text(monthFormatter.string(from: calendar.date(from: DateComponents(year: selectedYear, month: month))!))
-                                        .tag(month)
-                                }
-                            }
-                            .pickerStyle(.wheel)
-                            .frame(width: 150, height: 120)
-                            
-                            Picker("Select Year", selection: $selectedYear) {
-                                ForEach(2020...9000, id: \.self) { year in
-                                    Text("\(year)").tag(year)
-                                }
-                            }
-                            .pickerStyle(.wheel)
-                            .frame(width: 100, height: 120)
+            // MARK: - Week Calendar
+            let week = currentWeek()
+            HStack(spacing: 10) {
+                ForEach(week, id: \.self) { date in
+                    dayView(for: date)
+                        .onTapGesture {
+                            selectedDate = date
                         }
-                        
-                        Button("Done") {
-                            withAnimation {
-                                updateSelectedDate()
-                                showMonthPicker = false
-                            }
-                        }
-                        .padding(.top, 8)
-                        .foregroundColor(.orange)
-                    }
-                    .padding()
-//                    .background(Color.white.opacity(0.85))
-                    .cornerRadius(20)
-                    
-                    
-                    
-                    
-                    
-                } else {
-                // MARK: - Week Calendar
-                let week = currentWeek()
-                HStack(spacing: 10) {
-                    ForEach(week, id: \.self) { date in
-                        dayView(for: date)
-                            .onTapGesture {
-                                selectedDate = date
-                            }
-                    }
                 }
             }
-          
+        }
+    }
 
-            
-        }
-        .animation(.easeInOut, value: showMonthPicker)
-    }
-    
-    
-    
-    
-    
     // MARK: - Helpers
-    func updateSelectedDate() {
-        let components = DateComponents(year: selectedYear, month: selectedMonth, day: 1)
-        if let newDate = calendar.date(from: components) {
-            selectedDate = newDate
-        }
-    }
-    
     func currentWeek() -> [Date] {
         guard let weekInterval = calendar.dateInterval(of: .weekOfYear, for: selectedDate) else { return [] }
         let start = calendar.startOfDay(for: weekInterval.start)
@@ -224,15 +157,41 @@ struct TestWeekCalendarView: View {
         return formatter.string(from: date)
     }
     
-    private var monthYearFormatter: DateFormatter {
+     var monthYearFormatter: DateFormatter {
         let f = DateFormatter()
         f.dateFormat = "MMMM yyyy"
         return f
     }
-    
-    private var monthFormatter: DateFormatter {
-        let f = DateFormatter()
-        f.dateFormat = "MMMM"
-        return f
+}
+
+
+
+
+// MARK: - Stat Card
+struct TestStatCard: View {
+    var icon: String
+    var count: Int
+    var label: String
+    var color: Color
+
+    var body: some View {
+        HStack(spacing: 8) {
+            Image(systemName: icon)
+                .foregroundColor(.orange)
+                .font(.system(size: 20))
+            VStack(alignment: .leading, spacing: 2) {
+                Text("\(count)")
+                    .font(.title3.bold())
+                    .foregroundColor(.white)
+                Text(label)
+                    .font(.caption)
+                    .foregroundColor(.white)
+            }
+        }
+        .frame(width: 140, height: 60)
+        .background(
+            RoundedRectangle(cornerRadius: 20)
+                .fill(color)
+        )
     }
 }

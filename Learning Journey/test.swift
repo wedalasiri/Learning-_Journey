@@ -11,6 +11,10 @@ struct ActivityView56: View {
     @State private var lastPressedDate: Date? = nil
     @State private var showFullCalendar = false
     @State private var goToِِEditView = false
+    @State private var showPicker = false
+
+    private let months = Calendar.current.monthSymbols   //  months for picker
+    private let years = Array(2020...2035)               //  years for picker
 
     @AppStorage("doneDates") private var doneDatesData: Data = Data()
     @AppStorage("freezeDates") private var freezeDatesData: Data = Data()
@@ -25,6 +29,7 @@ struct ActivityView56: View {
     @State private var selectedYear = Calendar.current.component(.year, from: Date())
     
 
+  
     
     // Formatter لعرض أسماء الشهور
     private let monthFormatter: DateFormatter = {
@@ -85,112 +90,125 @@ struct ActivityView56: View {
                 
                 
                 
-                // MARK: - Glassy Background Section
-                ZStack(alignment: .top) {
-                    Rectangle()
-                        .fill(
-                            LinearGradient(
-                                colors: [Color.gray.opacity(0.45), Color.gray.opacity(0.25)],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
-                        )
-                        .frame(width: 375, height: 300)
-                        .cornerRadius(20)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 20)
-                                .stroke(Color.white.opacity(0.15), lineWidth: 2)
-                        )
-                        .zIndex(0)
-                    
-                    // ✅ هنا نبدّل بين التقويم والـ Picker
-                    if showMonthPicker {
-                        VStack {
-                            HStack {
-                                Picker("Select Month", selection: $selectedMonth) {
-                                    ForEach(1...12, id: \.self) { month in
-                                        Text(monthFormatter.string(from: Calendar.current.date(from: DateComponents(year: selectedYear, month: month))!))
-                                            .tag(month)
-                                    }
-                                }
-                                .pickerStyle(.wheel)
-                                .frame(width: 150, height: 120)
-                                
-                                Picker("Select Year", selection: $selectedYear) {
-                                    ForEach(2020...9000, id: \.self) { year in
-                                        Text("\(year)").tag(year)
-                                    }
-                                }
-                                .pickerStyle(.wheel)
-                                .frame(width: 200, height: 220)
-                            }
-                            
-                            Button("Done") {
-                                withAnimation(.easeInOut) {
-                                    updateSelectedDate()
-                                    showMonthPicker = false
-                                }
-                            }
-                            .padding(.top, 8)
-                            .foregroundColor(.orange)
-                        }
-                        .padding()
-                        .background(Color.black.opacity(0.85))
-                        .cornerRadius(20)
-                        .transition(.opacity)
-                        .zIndex(1) // تأكد أنه فوق المربع وليس تحته
-                        
-                        
-                        
-                        
-                        
-                        
-                    } else {
-                        VStack(spacing: 16) {
-                            TestWeekCalendarView(
-                                selectedDate: $currentDate,
-                                doneDates: completedDates,
-                                freezeDates: freezedDates
-                            )
-                            .padding(.horizontal)
-                            
-                            Divider().background(Color.white.opacity(0.15))
-                            
-                            VStack(alignment: .leading, spacing: 12) {
-                                HStack(spacing: 4) {
-                                    Text("Learning")
-                                        .font(.headline)
-                                        .foregroundColor(.white)
-                                    
-                                    Text(topic)
-                                        .font(.headline)
-                                        .foregroundColor(.white)
-                                }
-                                HStack(spacing: 20) {
-                                    TestStatCard(
-                                        icon: "flame.fill",
-                                        count: learnedCount,
-                                        label: "Days Learned",
-                                        color: Color(red: 0.35, green: 0.2, blue: 0)
-                                    )
-                                    
-                                    TestStatCard(
-                                        icon: "cube.fill",
-                                        count: freezedCount,
-                                        label: "Days Freezed",
-                                        color: Color(red: 0.1, green: 0.25, blue: 0.35)
-                                    )
-                                }
-                            }
-                            .padding(.horizontal)
-                        }
-                        .padding(.vertical, 20)
-                        .transition(.opacity)
-                        .zIndex(0)
-                    }
-                }
-                .padding(.horizontal)
-                .offset(y: 5)
+                // MARK: - Glassy Calendar / Picker Section
+                  ZStack(alignment: .top) {
+                      Rectangle()
+                          .fill(
+                              LinearGradient(
+                                  colors: [Color.gray.opacity(0.45), Color.gray.opacity(0.25)],
+                                  startPoint: .topLeading,
+                                  endPoint: .bottomTrailing
+                              )
+                          )
+                          .overlay(
+                              RoundedRectangle(cornerRadius: 30)
+                                  .stroke(Color.white.opacity(0.15), lineWidth: 1)
+                          )
+                          .frame(width: 375, height: 300)
+                          .cornerRadius(30)
+                      
+                      VStack(spacing: 0) {
+                          // MARK: - Header inside box
+                          HStack {
+//                              Text("\(monthName(for: selectedMonth)) \(String(selectedYear))")
+//                                  .textCase(nil)
+//                                  .font(.system(size: 22, weight: .bold))
+//                                  .foregroundColor(.white)
+                              Text(monthYearFormatter.string(from: currentDate)) // ← use currentDate here
+                                  .font(.headline)
+                                  .foregroundColor(.white)
+                              
+                              Button {
+                                  showPicker.toggle()
+                              } label: {
+                                  Image(systemName: showPicker ? "chevron.up" : "chevron.down")
+                                      .foregroundColor(.orange)
+                                      .font(.system(size: 18, weight: .bold))
+                              }
+                              
+                              Spacer()
+                              
+                              
+                          }
+                          .padding(.horizontal)
+                          .offset(y: 0)
+                          
+                          // MARK: - Picker or Calendar
+                          if showPicker {
+                              HStack(spacing: 0) {
+                                  Picker("Month", selection: $selectedMonth) {
+                                      ForEach(months, id: \.self) { month in
+                                          Text(month)
+                                              .tag(month)
+                                              .foregroundColor(.white)
+                                      }
+                                  }
+                                  .pickerStyle(.wheel)
+                                  .frame(maxWidth: .infinity)
+                                  .labelsHidden()
+                                  
+                                  Picker("Year", selection: $selectedYear) {
+                                      ForEach(years, id: \.self) { year in
+                                          Text(String(format: "%d", year))
+                                              .tag(year)
+                                              .foregroundColor(.white)
+                                      }
+                                  }
+                                  .pickerStyle(.wheel)
+                                  .frame(maxWidth: .infinity)
+                                  .labelsHidden()
+                              }
+                              .frame(height: 160)
+                              
+
+                              .onChange(of: selectedMonth) { _ in updateSelectedDate() }
+                              .onChange(of: selectedYear) { _ in updateSelectedDate() }
+
+                          } else {
+                              VStack(spacing: 16) {
+                                  TestWeekCalendarView(
+                                      selectedDate: $currentDate,
+                                      doneDates: completedDates,
+                                      freezeDates: freezedDates
+                                  )
+                                  .padding(.horizontal)
+                                  
+                                  Divider().background(Color.white.opacity(0.15))
+                                  
+                                  VStack(alignment: .leading, spacing: 12) {
+                                      HStack(spacing: 4) {
+                                          Text("Learning")
+                                              .font(.headline)
+                                              .foregroundColor(.white)
+                                          
+                                          Text(topic)
+                                              .font(.headline)
+                                              .foregroundColor(.white)
+                                      }
+                                      HStack(spacing: 20) {
+                                          TestStatCard(
+                                              icon: "flame.fill",
+                                              count: learnedCount,
+                                              label: "Days Learned",
+                                              color: Color(red: 0.35, green: 0.2, blue: 0)
+                                          )
+                                          
+                                          TestStatCard(
+                                              icon: "cube.fill",
+                                              count: freezedCount,
+                                              label: "Days Freezed",
+                                              color: Color(red: 0.1, green: 0.25, blue: 0.35)
+                                          )
+                                      }
+                                  }
+                                  .padding(.horizontal)
+                              }
+                          }
+                      }
+                      .padding(.top)
+                  }
+                  .padding(.horizontal)
+                  .offset(y: 5)
 
 
                 
@@ -468,9 +486,21 @@ struct ActivityView56: View {
             currentDate = newDate
         }
     }
+    func monthName(for monthNumber: Int) -> String {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_US") // ← لو تبغاه بالعربي
+        return formatter.monthSymbols[monthNumber - 1]
+    }
 
 }
 
+
+
+private var monthYearFormatter: DateFormatter {
+    let f = DateFormatter()
+    f.dateFormat = "MMMM yyyy"
+    return f
+} 
 #Preview {
     NavigationStack {
         ActivityView56(
