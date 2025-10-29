@@ -76,8 +76,7 @@ screen
 <img width="1206" height="2622" alt="Simulator Screenshot - iPhone 17 - 2025-10-29 at 14 56 58" src="https://github.com/user-attachments/assets/8ea4b222-8d83-4d61-b098-1d55d1d252c9" />
 
 
-<img width="340" height="686" alt="Screenshot 1447-05-07 at 15 00 51" src="https://github.com/user-attachments/assets/389bc862-1e52-4d09-8fe3-d4774c375702" />
-
+<img width="590" height="1278" alt="Screenshot 2025-10-29 at 15 07 58" src="https://github.com/user-attachments/assets/e1cb4da6-1254-4367-bb21-92049d2b56ab" />
 
 
 <img width="1206" height="2622" alt="Simulator Screenshot - iPhone 17 - 2025-10-29 at 15 03 17" src="https://github.com/user-attachments/assets/80ff528a-d6d2-4446-99a4-8f77dd9b3df8" />
