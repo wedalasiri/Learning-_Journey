@@ -67,15 +67,20 @@
    - Offers options to reset or set a new learning goal.
 
 ---
+screen  
 
-## Usage
 
-```swift
-NavigationStack {
-    ActivityView56(
-        topic: "Swift",
-        timeframe: "Week",
-        startDate: Date(),
-        endDate: Calendar.current.date(byAdding: .day, value: 7, to: Date())!
-    )
-}
+<img width="1206" height="2622" alt="Simulator Screenshot - iPhone 17 - 2025-10-29 at 14 56 47" src="https://github.com/user-attachments/assets/008a528c-ef56-423b-a560-d1f5e9393c8f" />
+
+
+<img width="1206" height="2622" alt="Simulator Screenshot - iPhone 17 - 2025-10-29 at 14 56 58" src="https://github.com/user-attachments/assets/8ea4b222-8d83-4d61-b098-1d55d1d252c9" />
+
+
+<img width="340" height="686" alt="Screenshot 1447-05-07 at 15 00 51" src="https://github.com/user-attachments/assets/389bc862-1e52-4d09-8fe3-d4774c375702" />
+
+
+
+<img width="1206" height="2622" alt="Simulator Screenshot - iPhone 17 - 2025-10-29 at 15 03 17" src="https://github.com/user-attachments/assets/80ff528a-d6d2-4446-99a4-8f77dd9b3df8" />
+
+
+
